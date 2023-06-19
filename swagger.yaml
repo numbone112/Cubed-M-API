@@ -18,6 +18,8 @@ tags:
 
   - name: "mo"
     description: "power of community to take you move"
+  - name: "invite"
+    description: "invite somebody who you want to exercise together"
 
 schemes:
   - "https"
@@ -218,12 +220,11 @@ paths:
         default:
           description: "successful operation"
   /mo/{userId}:
-    get:
+    post:
       tags:
         - "mo"
-      summary: "Find mo friend who have exercised with you together  by ID"
+      summary: "Hidden somebody who you don't want to see in your mo friend list or cancel hiddening"
       description: "Returns a list of your mo friend"
-      operationId: "getPetById"
       produces:
         - "application/json"
       parameters:
@@ -259,10 +260,10 @@ paths:
       security:
         - api_key: []
 
-    post:
+    get:
       tags:
         - "mo"
-      summary: "Hidden somebody who you don't want to see in your mo friend list or cancel hiddening"
+      summary: "Find mo friend who have exercised with you together  by ID"
       produces:
         - "application/json"
       parameters:
@@ -283,6 +284,173 @@ paths:
           description: "Invalid ID supplied"
         404:
           description: "user not found"
+  /invite/user/{userId}:
+    get:
+      tags:
+        - "invite"
+      summary: "search my invite"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "userId"
+          in: "path"
+          description: "ID of user to return"
+          required: true
+          type: "integer"
+          format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Invite"
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "user not found"
+    post:
+      tags:
+        - "invite"
+      summary: "create a invite"
+      description: ""
+      produces:
+        - "application/json"
+      parameters:
+        - name: "userId"
+          in: "path"
+          description: "ID of 召集人"
+          required: true
+          type: "integer"
+          format: "int64"
+        - name: "friend"
+          in: "query"
+          description: "ID of mo friend"
+          required: true
+          type: "array"
+
+        - name: "name"
+          in: "query"
+          description: "name of invite"
+          required: true
+          type: "string"
+        - name: "time"
+          in: "query"
+          description: "time of exercise"
+          required: true
+          type: "string"
+          format: "int64"
+        - name: "remark"
+          in: "query"
+          description: "remark of invite"
+          required: true
+          type: "string"
+          format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "object"
+            items:
+              $ref: "#/definitions/ApIResponse"
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "user not found"
+      security:
+        - api_key: []
+    put:
+      tags:
+        - "invite"
+      summary: "update a invite"
+      description: ""
+      produces:
+        - "application/json"
+      parameters:
+        - name: "a_id"
+          in: "path"
+          description: "ID of invite"
+          required: true
+          type: "integer"
+          format: "int64"
+        - name: "friend"
+          in: "query"
+          description: "ID of mo friend"
+          required: true
+          type: "array"
+        - name: "name"
+          in: "query"
+          description: "name of invite"
+          required: true
+          type: "string"
+        - name: "time"
+          in: "query"
+          description: "time of exercise"
+          required: true
+          type: "string"
+          format: "int64"
+        - name: "remark"
+          in: "query"
+          description: "remark of invite"
+          required: true
+          type: "string"
+          format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "object"
+            items:
+              $ref: "#/definitions/ApIResponse"
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "user not found"
+  /invite/accept:
+    post:
+      tags:
+        - "invite"
+      summary: "do you want to accept the invite"
+      parameters:
+        - name: "accept"
+          in: "query"
+          description: ""
+          required: true
+          type: "boolean"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "object"
+            items:
+              $ref: "#/definitions/ApIResponse"
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "user not found"
+  /invite/detail/{a_id}:
+    get:
+      tags:
+        - "invite"
+      parameters:
+        - name: "a_id"
+          in: "path"
+          description: ""
+          required: true
+          type: "integer"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "object"
+            items:
+              $ref: "#/definitions/Invite_detail"
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "user not found"
+
+      deprecated: false
 
 definitions:
   ApIResponse:
@@ -320,6 +488,32 @@ definitions:
         description: "User Status"
     xml:
       name: "User"
+  Invite:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+      m_id:
+        type: "string"
+      friend:
+        type: "array"
+      time:
+        type: "string"
+      remark:
+        type: "string"
+  Invite_detail:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+      a_id:
+        type: "integer"
+      user_id:
+        type: "string"
+      accept:
+        type: "boolean"
+      done:
+        type: "array"
 
 externalDocs:
   description: "Find out more about Swagger"
