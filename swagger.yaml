@@ -25,6 +25,52 @@ schemes:
   - "https"
   - "http"
 paths:
+  /login:
+    post:
+      tags:
+        - "user"
+      summary: "Logs user into the system"
+      description: ""
+      operationId: "loginUser"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "id"
+          in: "query"
+          description: "The user id for login"
+          required: true
+          type: "string"
+        - name: "password"
+          in: "query"
+          description: "The password for login in clear text"
+          required: true
+          type: "string"
+      responses:
+        default:
+          description: "successful operation"
+  /sign:
+    post:
+      tags:
+        - "user"
+      summary: "Create user"
+      description: "This can only be done by the logged in user."
+      operationId: "createUser"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+        - "application/xml"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Created user object"
+          required: true
+          schema:
+            $ref: "#/definitions/User"
+      responses:
+        default:
+          description: "successful operation"
+  #這是啥我忘記了
   /user/createWithArray:
     post:
       tags:
@@ -49,6 +95,7 @@ paths:
       responses:
         default:
           description: "successful operation"
+  #這是啥我忘記了
   /user/createWithList:
     post:
       tags:
@@ -73,20 +120,21 @@ paths:
       responses:
         default:
           description: "successful operation"
-  /user/{username}:
+# 看個人資料、更新、刪除帳號
+  /user/{userID}:
     get:
       tags:
         - "user"
-      summary: "Get user by user name"
+      summary: "Get user by user ID"
       description: ""
-      operationId: "getUserByName"
+      operationId: "getUserByID"
       produces:
         - "application/json"
         - "application/xml"
       parameters:
-        - name: "username"
+        - name: "userID"
           in: "path"
-          description: "The name that needs to be fetched. Use user1 for testing. "
+          description: "The ID that needs to be fetched. Use 11136001 for testing. "
           required: true
           type: "string"
       responses:
@@ -98,6 +146,7 @@ paths:
           description: "Invalid username supplied"
         404:
           description: "User not found"
+
     put:
       tags:
         - "user"
@@ -146,43 +195,7 @@ paths:
           description: "Invalid username supplied"
         404:
           description: "User not found"
-  /user/login:
-    get:
-      tags:
-        - "user"
-      summary: "Logs user into the system"
-      description: ""
-      operationId: "loginUser"
-      produces:
-        - "application/json"
-        - "application/xml"
-      parameters:
-        - name: "username"
-          in: "query"
-          description: "The user name for login"
-          required: true
-          type: "string"
-        - name: "password"
-          in: "query"
-          description: "The password for login in clear text"
-          required: true
-          type: "string"
-      responses:
-        200:
-          description: "successful operation"
-          headers:
-            X-Expires-After:
-              type: "string"
-              format: "date-time"
-              description: "date in UTC when token expires"
-            X-Rate-Limit:
-              type: "integer"
-              format: "int32"
-              description: "calls per hour allowed by the user"
-          schema:
-            type: "string"
-        400:
-          description: "Invalid username/password supplied"
+
   /user/logout:
     get:
       tags:
@@ -197,28 +210,8 @@ paths:
       responses:
         default:
           description: "successful operation"
-  /user:
-    post:
-      tags:
-        - "user"
-      summary: "Create user"
-      description: "This can only be done by the logged in user."
-      operationId: "createUser"
-      consumes:
-        - "application/json"
-      produces:
-        - "application/json"
-        - "application/xml"
-      parameters:
-        - in: "body"
-          name: "body"
-          description: "Created user object"
-          required: true
-          schema:
-            $ref: "#/definitions/User"
-      responses:
-        default:
-          description: "successful operation"
+
+# 隱藏mo伴及mo伴清單
   /mo/{userId}:
     post:
       tags:
@@ -284,7 +277,7 @@ paths:
           description: "Invalid ID supplied"
         404:
           description: "user not found"
-  /invite/user/{userId}:
+  /invite/list/{m_id}/{int:mode}:
     get:
       tags:
         - "invite"
@@ -309,6 +302,7 @@ paths:
           description: "Invalid ID supplied"
         404:
           description: "user not found"
+  /invite/{m_id}: 
     post:
       tags:
         - "invite"
@@ -359,6 +353,31 @@ paths:
           description: "user not found"
       security:
         - api_key: []
+  
+  /invite/{m_id}/{id}:
+    
+    get:
+      tags:
+        - "invite"
+      parameters:
+        - name: "a_id"
+          in: "path"
+          description: ""
+          required: true
+          type: "integer"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "object"
+            items:
+              $ref: "#/definitions/Invite_detail"
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "user not found"
+
+      deprecated: false
     put:
       tags:
         - "invite"
@@ -406,7 +425,6 @@ paths:
           description: "Invalid ID supplied"
         404:
           description: "user not found"
-  /invite/accept:
     post:
       tags:
         - "invite"
@@ -428,29 +446,8 @@ paths:
           description: "Invalid ID supplied"
         404:
           description: "user not found"
-  /invite/detail/{a_id}:
-    get:
-      tags:
-        - "invite"
-      parameters:
-        - name: "a_id"
-          in: "path"
-          description: ""
-          required: true
-          type: "integer"
-      responses:
-        200:
-          description: "successful operation"
-          schema:
-            type: "object"
-            items:
-              $ref: "#/definitions/Invite_detail"
-        400:
-          description: "Invalid ID supplied"
-        404:
-          description: "user not found"
-
-      deprecated: false
+    
+    
 
 definitions:
   ApIResponse:
