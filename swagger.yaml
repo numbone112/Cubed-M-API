@@ -141,7 +141,7 @@ paths:
         200:
           description: "successful operation"
           schema:
-            $ref: "#/definitions/User"
+            $ref: "#/definitions/Profile"
         400:
           description: "Invalid username supplied"
         404:
@@ -157,7 +157,6 @@ paths:
         - "application/json"
       produces:
         - "application/json"
-        - "application/xml"
       parameters:
         - name: "username"
           in: "path"
@@ -169,7 +168,7 @@ paths:
           description: "Updated user object"
           required: true
           schema:
-            $ref: "#/definitions/User"
+            $ref: "#/definitions/Profile"
       responses:
         400:
           description: "Invalid user supplied"
@@ -183,7 +182,6 @@ paths:
       operationId: "deleteUser"
       produces:
         - "application/json"
-        - "application/xml"
       parameters:
         - name: "username"
           in: "path"
@@ -360,7 +358,7 @@ paths:
       tags:
         - "invite"
       parameters:
-        - name: "a_id"
+        - name: "id"
           in: "path"
           description: ""
           required: true
@@ -447,7 +445,46 @@ paths:
         404:
           description: "user not found"
     
-    
+  /history/list/{id}:
+    get:
+      tags:
+        - "history"
+      parameters:
+        - name: 'id'
+          in: 'path'
+          required: true
+          type: 'string'
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "object"
+            items:
+              $ref: "#/definitions/Histories"
+  /history/list/{id}/{h_id}:
+     get:
+      tags:
+        - "history"
+      parameters:
+        - name: 'id'
+          in: 'path'
+          required: true
+          type: 'string'
+        - name: 'h_id'
+          in: 'path'
+          type: 'string'
+          required: true
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "object"
+            items:
+              $ref: "#/definitions/HistoryDetail"
+
+
+
+        
 
 definitions:
   ApIResponse:
@@ -511,6 +548,97 @@ definitions:
         type: "boolean"
       done:
         type: "array"
+  Profile:
+    type: 'object'
+    properties:
+      id:
+        type: 'string'
+      name: 
+        type: 'string'
+      sex:
+        type: 'string'
+      birthday:
+        type: 'string'
+      phone:
+        type: 'string'
+      height:
+        type: 'number'
+      weight:
+        type: 'number'
+      disease:
+        type: 'object'
+        $ref: '#/definitions/Disease'
+  Disease:
+    type: 'object'
+    properties:
+      name:
+        type: 'string'
+  Histories:
+    type: 'object'
+    properties:
+      name:
+        type: 'string'
+      time: 
+        type: 'string'
+      m_name:
+        type: 'string'
+      friends:
+        type: 'object'
+        $ref: '#/definitions/friends'
+      avg_score:
+        type: 'number'
+      score:
+        type: 'number'
+      items: 
+        type: 'string'
+  HistoryDetail:
+    type: 'object'
+    properties:
+      name:
+        type: 'string'
+      friends: 
+        type: 'object'
+        $ref: '#/definitions/HistoryScore'
+
+      
+      
+
+  friends:
+    type: 'object'
+    properties:
+      name: 
+        type: 'string'
+      id:
+        type: 'string'
+
+  HistoryScore:
+    type: 'object'
+    properties:
+      name:
+        type: 'string'
+      score:
+        type: 'number'
+      items: 
+        type: 'object'
+        $ref: '#/definitions/HistoryItemScore'
+
+
+  
+  HistoryItemScore:
+    type: 'object'
+    properties:
+      name:
+        type: 'string'
+      count:
+        type: 'integer'
+      score:
+        type: 'number'
+
+
+
+
+
+
 
 externalDocs:
   description: "Find out more about Swagger"
